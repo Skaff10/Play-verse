@@ -1,0 +1,96 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                String       @id @default(uuid())
+  displayName       String
+  email             String       @unique
+  passwordHash      String?
+  avatarUrl         String?
+  totalScore        Int          @default(0)
+  joinedAt          DateTime     @default(now())
+  moviesLoggedCount Int          @default(0)
+  seriesLoggedCount Int          @default(0)
+  gamesLoggedCount  Int          @default(0)
+
+  entries           UserEntry[]
+  scoreEvents       ScoreEvent[]
+  rateLimits        RateLimit[]
+
+  @@index([totalScore])
+}
+
+model CatalogItem {
+  id             String      @id @default(uuid())
+  type           String      // "movie" | "series" | "game"
+  externalId     String      // Unique external API ID or seed ID
+  title          String
+  coverUrl       String
+  backdropUrl    String?
+  releaseYear    Int
+  genres         String      // Stored as JSON string array e.g. ["Action", "Sci-Fi"]
+  avgRating      Float       @default(0.0)
+  ratingCount    Int         @default(0)
+  weightedRating Float       @default(0.0)
+  createdAt      DateTime    @default(now())
+
+  userEntries    UserEntry[]
+
+  @@unique([type, externalId])
+  @@index([type, weightedRating])
+}
+
+model UserEntry {
+  id             String      @id @default(uuid())
+  userId         String
+  catalogItemId  String
+  type           String      // "movie" | "series" | "game"
+  status         String      // "in_progress" | "completed" | "dropped"
+  timesCompleted Int         @default(1)
+  userRating     Float?      // 1 to 10
+  review         String?
+  pointsAwarded  Int         @default(0)
+  loggedAt       DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  catalogItem    CatalogItem @relation(fields: [catalogItemId], references: [id], onDelete: Cascade)
+  scoreEvents    ScoreEvent[]
+
+  @@unique([userId, catalogItemId])
+  @@index([userId, status])
+  @@index([catalogItemId])
+}
+
+model ScoreEvent {
+  id        String    @id @default(uuid())
+  userId    String
+  entryId   String
+  type      String    // "add_entry" | "mark_completed" | "replay" | "rating" | "review"
+  points    Int
+  createdAt DateTime  @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entry     UserEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model RateLimit {
+  id          String   @id @default(uuid())
+  userId      String
+  actionType  String   // e.g. "add_entry"
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, actionType])
+}
