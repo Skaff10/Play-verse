@@ -64,24 +64,24 @@ export default function LibraryPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-[#2E2B40] pb-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-stroke-dark pb-6">
         <div>
-          <span className="agency-badge text-xs font-bold uppercase">[ MY COLLECTION ]</span>
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-[#FFFFFE] font-display mt-1">Personal Library</h1>
-          <p className="text-xs text-[#94A1B2] font-serif-accent italic mt-1">
+          <span className="text-aui-eyebrow">[ MY COLLECTION ]</span>
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-mist font-display mt-1">Personal Library</h1>
+          <p className="text-xs text-mist/60 font-serif-accent italic mt-1">
             Logged movies, TV series, and video games ({entries.length} items recorded)
           </p>
         </div>
 
         {/* Search bar inside library */}
         <div className="relative w-full md:w-80">
-          <Search className="absolute left-3.5 top-3 w-4 h-4 text-[#94A1B2]" />
+          <Search className="absolute left-3.5 top-3 w-4 h-4 text-mist/50" />
           <input
             type="text"
             placeholder="Search your library..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#1A1825] border border-[#2E2B40] focus:border-[#FF6B6B] pl-10 pr-4 py-2.5 text-xs text-[#FFFFFE] focus:outline-none"
+            className="w-full bg-eerie border border-stroke-dark focus:border-fire pl-10 pr-4 py-2.5 text-xs text-mist focus:outline-none rounded-md transition-colors"
           />
         </div>
       </div>
@@ -89,8 +89,8 @@ export default function LibraryPage() {
       {/* FILTER TABS & CONTROLS */}
       <div className="space-y-4">
         {/* Row 1: Category Filter (All, Movies, Series, Games) */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#2E2B40]">
-          <div className="flex flex-wrap items-center gap-1.5 bg-[#1A1825] p-1 border border-[#2E2B40]">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-stroke-dark">
+          <div className="flex flex-wrap items-center gap-1.5 bg-eerie p-1 border border-stroke-dark rounded-md">
             {[
               { id: 'all', label: 'All Catalog', icon: SlidersHorizontal },
               { id: 'movie', label: 'Movies', icon: Film },
@@ -103,13 +103,13 @@ export default function LibraryPage() {
                 <button
                   key={tab.id}
                   onClick={() => setTypeFilter(tab.id)}
-                  className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium transition-all cursor-pointer rounded-sm ${
                     isActive
-                      ? 'bg-[#FF6B6B] text-[#FFFFFE]'
-                      : 'text-[#94A1B2] hover:text-[#FFFFFE] hover:bg-[#242234]'
+                      ? 'bg-fire text-mist font-bold'
+                      : 'text-mist/70 hover:text-mist hover:bg-space'
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#FFFFFE]' : 'text-[#4ECDC4]'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-mist' : 'text-fire'}`} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -117,12 +117,12 @@ export default function LibraryPage() {
           </div>
 
           {/* Sort Selector */}
-          <div className="flex items-center gap-2 text-xs text-[#94A1B2] font-bold">
+          <div className="flex items-center gap-2 text-xs text-mist/70 font-medium">
             <span>Sort By:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-[#1A1825] border border-[#2E2B40] text-[#FFFFFE] px-3 py-1.5 text-xs focus:outline-none cursor-pointer font-display font-semibold"
+              className="bg-eerie border border-stroke-dark text-mist px-3 py-1.5 text-xs focus:outline-none cursor-pointer font-display font-semibold rounded-md"
             >
               <option value="updated">Recently Updated</option>
               <option value="rating">Highest User Rating</option>
@@ -133,23 +133,23 @@ export default function LibraryPage() {
 
         {/* Row 2: Status Filter (All, In Progress, Completed, Dropped) */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
-          <span className="text-xs font-bold text-[#94A1B2] uppercase tracking-wider mr-2 font-display">
+          <span className="text-xs font-bold text-mist/60 uppercase tracking-wider mr-2 font-display">
             Status:
           </span>
           {[
             { id: 'all', label: 'All Statuses' },
-            { id: 'wishlist', label: 'Wishlist 💜' },
-            { id: 'in_progress', label: 'In Progress ⏳' },
-            { id: 'completed', label: 'Completed ✅' },
-            { id: 'dropped', label: 'Dropped 🚫' },
+            { id: 'wishlist', label: 'Wishlist' },
+            { id: 'in_progress', label: 'In Progress' },
+            { id: 'completed', label: 'Completed' },
+            { id: 'dropped', label: 'Dropped' },
           ].map((st) => (
             <button
               key={st.id}
               onClick={() => setStatusFilter(st.id)}
-              className={`px-3 py-1 text-xs font-bold border transition-colors whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1 text-xs font-medium border transition-colors whitespace-nowrap cursor-pointer rounded-md ${
                 statusFilter === st.id
-                  ? 'bg-[#FF6B6B] text-[#FFFFFE] border-[#FF6B6B]'
-                  : 'bg-[#1A1825] text-[#94A1B2] border-[#2E2B40] hover:border-[#FF6B6B]'
+                  ? 'bg-fire text-mist border-fire font-bold'
+                  : 'bg-eerie text-mist/70 border-stroke-dark hover:border-fire hover:text-mist'
               }`}
             >
               {st.label}
@@ -164,15 +164,15 @@ export default function LibraryPage() {
           {[...Array(10)].map((_, i) => (
             <div
               key={i}
-              className="aspect-[2/3] bg-[#1A1825] animate-pulse border border-[#2E2B40]"
+              className="aspect-[2/3] bg-eerie animate-pulse border border-stroke-dark rounded-xl"
             />
           ))}
         </div>
       ) : filteredEntries.length === 0 ? (
-        <div className="agency-card p-16 text-center space-y-4 bg-[#1A1825] border border-[#2E2B40]">
-          <Filter className="w-10 h-10 text-[#94A1B2] mx-auto" />
-          <h3 className="text-lg font-bold text-[#FFFFFE] font-display">No entries match your filter</h3>
-          <p className="text-xs text-[#94A1B2] font-serif-accent italic">
+        <div className="card-aui p-16 text-center space-y-4 bg-eerie border border-stroke-dark rounded-xl">
+          <Filter className="w-10 h-10 text-mist/40 mx-auto" />
+          <h3 className="text-lg font-bold text-mist font-display">No entries match your filter</h3>
+          <p className="text-xs text-mist/60 font-serif-accent italic">
             Try resetting your status or category filters, or search for a title in Browse.
           </p>
         </div>

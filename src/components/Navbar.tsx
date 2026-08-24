@@ -9,9 +9,10 @@ import {
   Search,
   Sparkles,
   PlusCircle,
-  Flame,
   LogOut,
   User,
+  Menu,
+  X,
 } from 'lucide-react';
 import LogEntryModal from './LogEntryModal';
 import { signOut } from 'firebase/auth';
@@ -31,6 +32,7 @@ export default function Navbar() {
   const [user, setUser] = useState<UserSessionData | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const fetchSession = async () => {
     try {
@@ -52,12 +54,8 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     try {
-      // 1. Sign out from Firebase
       await signOut(auth);
-
-      // 2. Clear server-side session cookie
       await fetch('/api/auth/sign-out', { method: 'POST' });
-
       setUser(null);
       setShowUserMenu(false);
       router.push('/');
@@ -67,67 +65,75 @@ export default function Navbar() {
     }
   };
 
-  // Level calculation derived from totalScore (e.g. 40 XP per Level)
   const userXP = user?.totalScore || 0;
   const userLevel = Math.floor(userXP / 40) + 1;
 
   const navLinks = [
-    { href: '/dashboard', label: 'Dashboard', icon: Flame },
-    { href: '/library', label: 'My Library', icon: Library },
-    { href: '/browse', label: 'Browse', icon: Search },
-    { href: '/leaderboards', label: 'Leaderboards', icon: Trophy },
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/library', label: 'Library' },
+    { href: '/browse', label: 'Browse' },
+    { href: '/leaderboards', label: 'Leaderboards' },
   ];
+
+  // Check if we're on the landing page (show transparent nav)
+  const isLanding = pathname === '/';
 
   return (
     <>
-      <header className="sticky top-0 z-40 agency-nav">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 border-b border-[#2E2B40]">
-            {/* Brand Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-[#FF6B6B] text-[#FFFFFE] flex items-center justify-center font-extrabold text-lg tracking-wider group-hover:bg-[#E05555] transition-colors rounded-xs">
-                PV
-              </div>
-              <div className="flex flex-col">
-                <span className="font-extrabold text-xl tracking-tight text-[#FFFFFE] font-display">
-                  Play<span className="text-[#FF6B6B]">Verse</span>
+      <header
+        className={`sticky top-0 z-[50] mx-auto w-full px-5 md:px-12 ${
+          isLanding ? 'mt-[41px] md:mt-[47px]' : ''
+        } nav-aui`}
+      >
+        <div className="mx-auto h-full w-full">
+          <div className="flex h-16 w-full items-center justify-between gap-6 lg:h-20">
+            {/* Logo */}
+            <div className="flex flex-1 items-center gap-2">
+              <Link href="/" className="flex items-center gap-2 group" aria-label="Back to Home">
+                <div className="flex h-[33px] w-[33px] items-center justify-center rounded border border-mist/20 bg-space text-mist transition-colors group-hover:border-mist/40">
+                  <span className="text-sm font-extrabold tracking-wider">PV</span>
+                </div>
+                <span className="hidden text-[15px] font-bold tracking-tight text-mist sm:inline">
+                  Play<span className="text-fire">Verse</span>
                 </span>
-                
-              </div>
-            </Link>
+              </Link>
 
-            {/* Center Nav Links */}
-            <nav className="hidden md:flex items-center gap-1 bg-[#1A1825] p-1 border border-[#2E2B40]">
-              {navLinks.map((link) => {
-                const Icon = link.icon;
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-tight transition-all ${
-                      isActive
-                        ? 'bg-[#FF6B6B] text-[#FFFFFE]'
-                        : 'text-[#94A1B2] hover:text-[#FFFFFE] hover:bg-[#242234]'
-                    }`}
-                  >
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#FFFFFE]' : ''}`} />
-                    <span>{link.label}</span>
-                  </Link>
-                );
-              })}
-            </nav>
+              {/* Desktop nav links */}
+              <nav className="ml-2 hidden flex-auto gap-2 md:flex">
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      aria-label={link.label}
+                      className="relative block"
+                    >
+                      <div
+                        className={`whitespace-nowrap border select-none inline-block rounded text-[15px] px-4 leading-[1] pt-[8px] pb-[9px] transition-colors duration-[400ms] ${
+                          isActive
+                            ? 'bg-fire text-mist border-fire'
+                            : 'bg-eerie text-mist border-stroke-dark hover:bg-mist hover:text-space hover:border-space/10'
+                        }`}
+                      >
+                        {link.label}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
 
-            {/* Right Controls & User Widget */}
-            <div className="flex items-center gap-3">
+            {/* Right Controls */}
+            <div className="hidden flex-1 justify-end md:flex items-center gap-2">
               {/* Quick Log Button */}
               {user && (
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="hidden sm:flex items-center gap-2 agency-btn-primary px-4 py-2.5 transition-all active:scale-95 cursor-pointer"
+                  className="btn-aui-fire cursor-pointer !py-[8px] !text-[14px]"
                 >
-                  <PlusCircle className="w-4 h-4" />
-                  <span>Log Title</span>
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  Log Title
                 </button>
               )}
 
@@ -135,47 +141,45 @@ export default function Navbar() {
                 <div className="relative">
                   <div
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-3 bg-[#1A1825] hover:bg-[#242234] border border-[#2E2B40] p-1.5 pr-3 cursor-pointer transition-all"
+                    className="flex items-center gap-3 rounded border border-stroke-dark bg-eerie p-1.5 pr-3 cursor-pointer transition-all hover:border-mist/20"
                   >
-                    {/* XP Indicator Pill */}
-                    <div className="bg-[#FF6B6B] text-[#FFFFFE] font-extrabold text-xs px-2.5 py-1 flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 fill-white" />
+                    {/* XP pill */}
+                    <div className="rounded bg-fire text-mist font-bold text-xs px-2.5 py-1.5 flex items-center gap-1.5">
+                      <Sparkles className="w-3 h-3 fill-mist/80" />
                       <span>{userXP} XP</span>
                     </div>
-
-                    {/* User info */}
                     <div className="hidden sm:flex flex-col text-left">
-                      <span className="text-xs font-bold text-[#FFFFFE] leading-none">
+                      <span className="text-xs font-bold text-mist leading-none">
                         {user.displayName}
                       </span>
-                      <span className="text-[10px] font-serif-accent italic text-[#94A1B2] mt-0.5">
-                        Lvl {userLevel} Scout
+                      <span className="text-[10px] font-serif-accent italic text-mist/50 mt-0.5">
+                        Lvl {userLevel}
                       </span>
                     </div>
                   </div>
 
                   {/* User Menu Dropdown */}
                   {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-56 bg-[#1A1825] border border-[#2E2B40] shadow-2xl p-2 z-50">
-                      <div className="px-3 py-2 border-b border-[#2E2B40] mb-1">
-                        <p className="text-[10px] font-serif-accent italic text-[#94A1B2]">Signed in as</p>
-                        <p className="text-sm font-bold text-[#FFFFFE] truncate">{user.displayName}</p>
-                        <p className="text-[10px] text-[#94A1B2] truncate">{user.email}</p>
-                        <p className="text-xs text-[#FF6B6B] font-extrabold mt-0.5">{user.totalScore} Total XP</p>
+                    <div className="absolute right-0 mt-2 w-56 rounded-lg border border-stroke-dark bg-eerie p-2 shadow-2xl z-50">
+                      <div className="px-3 py-2 border-b border-stroke-dark mb-1">
+                        <p className="text-[10px] font-serif-accent italic text-mist/50">Signed in as</p>
+                        <p className="text-sm font-bold text-mist truncate">{user.displayName}</p>
+                        <p className="text-[10px] text-mist/40 truncate">{user.email}</p>
+                        <p className="text-xs text-fire font-bold mt-0.5">{user.totalScore} Total XP</p>
                       </div>
 
                       <Link
                         href={`/profile/${user.id}`}
                         onClick={() => setShowUserMenu(false)}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#FFFFFE] hover:bg-[#242234] transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-mist rounded hover:bg-mist/5 transition-colors"
                       >
-                        <User className="w-3.5 h-3.5 text-[#FF6B6B]" />
+                        <User className="w-3.5 h-3.5 text-fire" />
                         <span>View Profile</span>
                       </Link>
 
                       <button
                         onClick={handleSignOut}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#FF6B6B] hover:bg-[#FF6B6B]/10 transition-colors border-t border-[#2E2B40] mt-1 pt-2 cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-fire rounded hover:bg-fire/10 transition-colors border-t border-stroke-dark mt-1 pt-2 cursor-pointer"
                       >
                         <LogOut className="w-3.5 h-3.5" />
                         <span>Sign Out</span>
@@ -184,36 +188,75 @@ export default function Navbar() {
                   )}
                 </div>
               ) : (
-                <Link
-                  href="/auth/sign-in"
-                  className="agency-btn-secondary px-4 py-2"
-                >
+                <Link href="/auth/sign-in" className="btn-aui-secondary !py-[8px] !text-[14px]">
                   Sign In
                 </Link>
               )}
             </div>
-          </div>
 
-          {/* Mobile Navigation Row */}
-          <div className="flex md:hidden items-center justify-around py-2 border-t border-[#2E2B40] bg-[#1A1825]">
+            {/* Mobile hamburger */}
+            <div
+              className="flex h-[36px] w-[36px] items-center justify-center rounded border border-stroke-dark bg-eerie md:hidden cursor-pointer"
+              role="button"
+              tabIndex={0}
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X className="w-4 h-4 text-mist" /> : <Menu className="w-4 h-4 text-mist" />}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {mobileOpen && (
+          <div className="flex flex-col gap-2 border-t border-stroke-dark bg-space py-4 md:hidden">
             {navLinks.map((link) => {
-              const Icon = link.icon;
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex flex-col items-center gap-1 px-3 py-1 text-[10px] font-bold ${
-                    isActive ? 'text-[#FF6B6B]' : 'text-[#94A1B2] hover:text-[#FFFFFE]'
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded transition-colors ${
+                    isActive
+                      ? 'bg-fire text-mist'
+                      : 'text-mist/70 hover:text-mist hover:bg-eerie'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span>{link.label}</span>
+                  {link.label}
                 </Link>
               );
             })}
+            {user ? (
+              <>
+                <button
+                  onClick={() => {
+                    setIsModalOpen(true);
+                    setMobileOpen(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-fire cursor-pointer"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  Log Title
+                </button>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-mist/50 cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/auth/sign-in"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-fire"
+              >
+                Sign In
+              </Link>
+            )}
           </div>
-        </div>
+        )}
       </header>
 
       {/* Global Quick Log Entry Modal */}

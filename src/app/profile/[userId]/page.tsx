@@ -49,48 +49,48 @@ export default async function PublicProfilePage({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
       {/* Profile Header */}
-      <div className="agency-card p-8 bg-[#1A1825] border border-[#2E2B40] space-y-6">
+      <div className="card-aui p-8 bg-eerie border border-stroke-dark space-y-6 rounded-xl">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-[#0F0E17] border border-[#FF6B6B] text-[#FFFFFE] font-extrabold text-2xl flex items-center justify-center font-display rounded-xs">
+            <div className="w-16 h-16 bg-space border border-fire text-mist font-extrabold text-2xl flex items-center justify-center font-display rounded-md shadow-md">
               {user.displayName.charAt(0)}
             </div>
             <div>
-              <span className="agency-badge text-xs font-bold uppercase">[ PUBLIC PROFILE ]</span>
+              <span className="text-aui-eyebrow">[ PUBLIC PROFILE ]</span>
               <div className="flex items-center gap-3 mt-1">
-                <h1 className="text-3xl font-extrabold text-[#FFFFFE] font-display">{user.displayName}</h1>
-                <span className={`text-xs font-extrabold px-3 py-1 font-display flex items-center gap-1 ${
-                  rank === 1 ? 'bg-[#FFD93D] text-[#0F0E17]' : 'bg-[#FF6B6B] text-[#FFFFFE]'
+                <h1 className="text-3xl font-extrabold text-mist font-display">{user.displayName}</h1>
+                <span className={`text-xs font-extrabold px-3 py-1 font-display flex items-center gap-1 rounded-sm ${
+                  rank === 1 ? 'bg-fire text-mist' : 'bg-space text-mist border border-stroke-dark'
                 }`}>
-                  <Trophy className="w-3.5 h-3.5" />
+                  <Trophy className="w-3.5 h-3.5 text-fire" />
                   <span>Rank #{rank}</span>
                 </span>
               </div>
-              <p className="text-xs text-[#94A1B2] font-serif-accent italic mt-1">
+              <p className="text-xs text-mist/60 font-serif-accent italic mt-1">
                 Joined {new Date(user.joinedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
               </p>
             </div>
           </div>
 
-          <div className="bg-[#0F0E17] border border-[#2E2B40] p-4 text-right">
-            <span className="text-2xl font-extrabold text-[#FF6B6B] font-display">{user.totalScore} XP</span>
-            <span className="text-[10px] text-[#94A1B2] uppercase font-bold block">Total Audited Points</span>
+          <div className="bg-space border border-stroke-dark p-4 text-right rounded-lg">
+            <span className="text-2xl font-extrabold text-fire font-display">{user.totalScore} XP</span>
+            <span className="text-[10px] text-mist/60 uppercase font-bold block">Total Audited Points</span>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-3 gap-6 pt-6 border-t border-[#2E2B40] text-center">
-          <div className="border-l-2 border-[#4ECDC4] pl-3 text-left">
-            <p className="text-2xl font-extrabold text-[#FFFFFE] font-display">{user.moviesLoggedCount}</p>
-            <p className="text-[10px] text-[#94A1B2] uppercase font-bold tracking-wider">Movies</p>
+        <div className="grid grid-cols-3 gap-6 pt-6 border-t border-stroke-dark text-center">
+          <div className="border-l-2 border-mist pl-3 text-left">
+            <p className="text-2xl font-extrabold text-mist font-display">{user.moviesLoggedCount}</p>
+            <p className="text-[10px] text-mist/60 uppercase font-bold tracking-wider">Movies</p>
           </div>
-          <div className="border-l-2 border-[#FF6B6B] pl-3 text-left">
-            <p className="text-2xl font-extrabold text-[#FFFFFE] font-display">{user.seriesLoggedCount}</p>
-            <p className="text-[10px] text-[#94A1B2] uppercase font-bold tracking-wider">Series</p>
+          <div className="border-l-2 border-fire pl-3 text-left">
+            <p className="text-2xl font-extrabold text-mist font-display">{user.seriesLoggedCount}</p>
+            <p className="text-[10px] text-mist/60 uppercase font-bold tracking-wider">Series</p>
           </div>
-          <div className="border-l-2 border-[#FFD93D] pl-3 text-left">
-            <p className="text-2xl font-extrabold text-[#FFFFFE] font-display">{user.gamesLoggedCount}</p>
-            <p className="text-[10px] text-[#94A1B2] uppercase font-bold tracking-wider">Games</p>
+          <div className="border-l-2 border-mist/40 pl-3 text-left">
+            <p className="text-2xl font-extrabold text-mist font-display">{user.gamesLoggedCount}</p>
+            <p className="text-[10px] text-mist/60 uppercase font-bold tracking-wider">Games</p>
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@ export default async function PublicProfilePage({
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <h2 className="text-xl font-extrabold text-[#FFFFFE] border-b border-[#2E2B40] pb-3 font-display">
+          <h2 className="text-xl font-extrabold text-mist border-b border-stroke-dark pb-3 font-display">
             Public Library Showcase ({entries.length})
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
@@ -122,20 +122,20 @@ export default async function PublicProfilePage({
         </div>
 
         <div className="space-y-6">
-          <h2 className="text-xl font-extrabold text-[#FFFFFE] border-b border-[#2E2B40] pb-3 font-display">
+          <h2 className="text-xl font-extrabold text-mist border-b border-stroke-dark pb-3 font-display">
             Recent Score Events
           </h2>
-          <div className="agency-card p-5 bg-[#1A1825] border border-[#2E2B40] space-y-3">
+          <div className="card-aui p-5 bg-eerie border border-stroke-dark space-y-3 rounded-xl">
             {scoreEvents.map((evt) => (
               <div
                 key={evt.id}
-                className="flex items-center justify-between p-3 bg-[#0F0E17] border border-[#2E2B40] text-xs"
+                className="flex items-center justify-between p-3 bg-space border border-stroke-dark text-xs rounded-md"
               >
                 <div>
-                  <p className="font-extrabold text-[#FFFFFE] capitalize font-display">{evt.type.replace('_', ' ')}</p>
-                  <p className="text-[10px] text-[#94A1B2] font-serif-accent italic">{evt.entry.catalogItem.title}</p>
+                  <p className="font-extrabold text-mist capitalize font-display">{evt.type.replace('_', ' ')}</p>
+                  <p className="text-[10px] text-mist/60 font-serif-accent italic">{evt.entry.catalogItem.title}</p>
                 </div>
-                <span className="font-extrabold text-[#FF6B6B] font-display">+{evt.points} XP</span>
+                <span className="font-extrabold text-fire font-display">+{evt.points} XP</span>
               </div>
             ))}
           </div>

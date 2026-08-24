@@ -1,126 +1,261 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --bg-primary: #0F0E17;
-    --bg-surface: #1A1825;
-    --bg-surface-hover: #242234;
-    --text-primary: #FFFFFE;
-    --text-secondary: #94A1B2;
-    --text-muted: #94A1B2;
-    --accent-primary: #FF6B6B;
-    --accent-primary-hover: #E05555;
-    --accent-secondary: #4ECDC4;
-    --accent-secondary-hover: #3DBDB5;
-    --accent-gold: #FFD93D;
-    --color-success: #6BCB77;
-    --color-error: #FF6B6B;
-    --border-subtle: #2E2B40;
-    --border-dark: #2E2B40;
-  }
+/* ─── AUI-Inspired Design Tokens ─── */
+@theme {
+  --color-space: #121212;
+  --color-eerie: #1E1E1E;
+  --color-mist: #F1F0E0;
+  --color-fire: #E84A23;
+  --color-fire-hover: #D03D1A;
+  --color-stroke-dark: rgba(241, 240, 224, 0.1);
+  --color-stroke-light: rgba(18, 18, 18, 0.1);
+  --color-muted: rgba(241, 240, 224, 0.5);
+  --color-dim: rgba(241, 240, 224, 0.7);
+}
 
+@layer base {
   body {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: var(--font-dm-sans), 'DM Sans', system-ui, sans-serif;
+    background-color: var(--color-space);
+    color: var(--color-mist);
+    font-family: var(--font-dm-sans), "DM Sans", system-ui, sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
 }
 
-/* Typography Utilities */
+/* ─── Typography ─── */
 .font-display {
-  font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), "DM Sans", sans-serif;
 }
 
 .font-serif-accent {
-  font-family: var(--font-lora), 'Lora', Georgia, serif;
+  font-family: var(--font-lora), "Lora", Georgia, serif;
 }
 
-/* Corporate Agency Glass & Card Styles */
-.agency-nav {
-  background: rgba(26, 24, 37, 0.94);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid #2E2B40;
-}
-
-.agency-card {
-  background: #1A1825;
-  border: 1px solid #2E2B40;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.agency-card:hover {
-  border-color: #FF6B6B;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px -10px rgba(255, 107, 107, 0.2);
-}
-
-.agency-card-dark {
-  background: #1A1825;
-  color: #FFFFFE;
-  border: 1px solid #2E2B40;
-}
-
-/* Agency Buttons */
-.agency-btn-primary {
-  background-color: #FF6B6B;
-  color: #FFFFFE;
-  font-weight: 700;
-  font-size: 0.875rem;
-  letter-spacing: -0.01em;
-  transition: all 0.2s ease;
-}
-
-.agency-btn-primary:hover {
-  background-color: #E05555;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(255, 107, 107, 0.35);
-}
-
-.agency-btn-secondary {
-  background-color: #1A1825;
-  color: #4ECDC4;
-  border: 1px solid #4ECDC4;
-  font-weight: 600;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-}
-
-.agency-btn-secondary:hover {
-  background-color: #4ECDC4;
-  color: #0F0E17;
-  box-shadow: 0 4px 14px rgba(78, 205, 196, 0.25);
-}
-
-/* Agency Badge & Counter */
-.agency-badge {
-  font-family: var(--font-lora), 'Lora', serif;
-  font-style: italic;
-  font-size: 0.8125rem;
-  color: #FF6B6B;
-  letter-spacing: 0.02em;
-}
-
-.agency-counter {
-  font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+/* AUI-style giant uppercase heading */
+.text-aui-heading {
+  font-family: var(--font-dm-sans), "DM Sans", sans-serif;
   font-weight: 800;
-  color: #FF6B6B;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
 }
 
-/* Custom Scrollbar */
+/* AUI-style eyebrow / label */
+.text-aui-eyebrow {
+  font-family: var(--font-dm-sans), "DM Sans", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-fire);
+}
+
+/* AUI-style body text */
+.text-aui-body {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-dim);
+}
+
+/* AUI-style large content text */
+.text-aui-content {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--color-dim);
+}
+
+/* ─── AUI Pill Buttons ─── */
+.btn-aui-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-dm-sans), "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  white-space: nowrap;
+  border: 1px solid var(--color-mist);
+  border-radius: 4px;
+  padding: 11.5px 20px;
+  line-height: 1;
+  background: var(--color-mist);
+  color: var(--color-space);
+  cursor: pointer;
+  transition: all 400ms ease;
+  user-select: none;
+}
+
+.btn-aui-primary:hover {
+  background: var(--color-space);
+  color: var(--color-mist);
+  border-color: rgba(241, 240, 224, 0.1);
+}
+
+.btn-aui-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-dm-sans), "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  white-space: nowrap;
+  border: 1px solid var(--color-stroke-dark);
+  border-radius: 4px;
+  padding: 11.5px 20px;
+  line-height: 1;
+  background: var(--color-space);
+  color: var(--color-mist);
+  cursor: pointer;
+  transition: all 400ms ease;
+  user-select: none;
+}
+
+.btn-aui-secondary:hover {
+  background: var(--color-mist);
+  color: var(--color-space);
+  border-color: rgba(18, 18, 18, 0.1);
+}
+
+.btn-aui-fire {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-dm-sans), "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  white-space: nowrap;
+  border: 1px solid var(--color-stroke-dark);
+  border-radius: 4px;
+  padding: 11.5px 20px;
+  line-height: 1;
+  background: var(--color-fire);
+  color: var(--color-mist);
+  cursor: pointer;
+  transition: all 400ms ease;
+  user-select: none;
+}
+
+.btn-aui-fire:hover {
+  background: var(--color-mist);
+  color: var(--color-space);
+  border-color: rgba(18, 18, 18, 0.1);
+}
+
+/* ─── AUI Card Styles ─── */
+.card-aui {
+  background: var(--color-space);
+  border: 1px solid var(--color-stroke-dark);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.card-aui:hover {
+  border-color: rgba(241, 240, 224, 0.2);
+}
+
+.card-aui-light {
+  background: var(--color-mist);
+  color: var(--color-space);
+  border-radius: 12px;
+}
+
+/* ─── AUI Tag Badges ─── */
+.badge-aui {
+  display: inline-block;
+  white-space: nowrap;
+  border-radius: 4px;
+  border: 1px solid var(--color-stroke-dark);
+  background: var(--color-eerie);
+  padding: 8px 12px;
+  font-family: var(--font-dm-sans), "DM Sans", monospace;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: white;
+}
+
+/* ─── Marquee Animation ─── */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  gap: 16px;
+  animation: marquee-scroll 40s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* ─── Navbar Glass ─── */
+.nav-aui {
+  background: rgba(18, 18, 18, 0.96);
+  backdrop-filter: blur(12px);
+}
+
+/* ─── Section Spacing ─── */
+.section-gap {
+  padding-top: 4rem;
+  padding-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .section-gap {
+    padding-top: 8rem;
+    padding-bottom: 1rem;
+  }
+}
+
+.section-gap-lg {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+  .section-gap-lg {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+  }
+}
+
+/* ─── Custom Scrollbar ─── */
 ::-webkit-scrollbar {
   width: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #0F0E17;
+  background: #121212;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2E2B40;
+  background: rgba(241, 240, 224, 0.15);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF6B6B;
+  background: var(--color-fire);
 }
 
+/* ─── Selection ─── */
+::selection {
+  background: var(--color-fire);
+  color: var(--color-mist);
+}
 
+/* ─── Smooth Scroll ─── */
+html {
+  scroll-behavior: smooth;
+}

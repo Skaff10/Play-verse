@@ -297,3 +297,86 @@ export async function upsertUserEntry({
 
   return result;
 }
+
+/**
+ * Delete a user entry and adjust user scores, counts, & catalog weighted ratings
+ */
+export async function deleteUserEntry({
+  userId,
+  entryId,
+  catalogItemId,
+  externalId,
+}: {
+  userId: string;
+  entryId?: string;
+  catalogItemId?: string;
+  externalId?: string;
+}) {
+  const possibleExternalId = externalId || catalogItemId;
+
+  const entry = await prisma.userEntry.findFirst({
+    where: {
+      userId,
+      ...(entryId ? { id: entryId } : {}),
+      ...(entryId
+        ? {}
+        : {
+            OR: [
+              ...(catalogItemId ? [{ catalogItemId }] : []),
+              ...(possibleExternalId ? [{ catalogItem: { externalId: possibleExternalId } }] : []),
+            ],
+          }),
+    },
+    include: {
+      catalogItem: true,
+    },
+  });
+
+  if (!entry) {
+    throw new Error('Entry not found or unauthorized');
+  }
+
+  const pointsAwarded = entry.pointsAwarded;
+  const itemType = entry.type;
+  const status = entry.status;
+  const targetCatalogItemId = entry.catalogItemId;
+
+  await prisma.$transaction(async (tx) => {
+    // Delete entry (Cascades to scoreEvents due to schema onDelete: Cascade)
+    await tx.userEntry.delete({
+      where: { id: entry.id },
+    });
+
+    // Determine category count field to update
+    const countField =
+      itemType === 'movie'
+        ? 'moviesLoggedCount'
+        : itemType === 'series'
+        ? 'seriesLoggedCount'
+        : 'gamesLoggedCount';
+
+    const currentUser = await tx.user.findUnique({
+      where: { id: userId },
+      select: { totalScore: true, moviesLoggedCount: true, seriesLoggedCount: true, gamesLoggedCount: true },
+    });
+
+    if (currentUser) {
+      const currentCount = (currentUser as any)[countField] || 0;
+      const newScore = Math.max(0, currentUser.totalScore - pointsAwarded);
+      const newCount = status !== 'wishlist' ? Math.max(0, currentCount - 1) : currentCount;
+
+      await tx.user.update({
+        where: { id: userId },
+        data: {
+          totalScore: newScore,
+          [countField]: newCount,
+        },
+      });
+    }
+  });
+
+  // Recalculate Bayesian weighted rating for the catalog item
+  await recalculateWeightedRating(targetCatalogItemId, itemType);
+
+  return { success: true };
+}

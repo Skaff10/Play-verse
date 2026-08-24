@@ -70,67 +70,67 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md space-y-8 agency-card p-8 bg-[#1A1825] border border-[#2E2B40]">
+      <div className="w-full max-w-md space-y-8 card-aui p-8 bg-eerie border border-stroke-dark rounded-xl">
         <div className="text-center space-y-2">
-          <span className="agency-badge text-xs font-bold uppercase">[ USER REGISTRATION ]</span>
-          <h1 className="text-3xl font-extrabold text-[#FFFFFE] font-display">Create Account</h1>
-          <p className="text-xs text-[#94A1B2] font-serif-accent italic">Join PlayVerse & start logging titles today</p>
+          <span className="text-aui-eyebrow">[ USER REGISTRATION ]</span>
+          <h1 className="text-3xl font-extrabold text-mist font-display">Create Account</h1>
+          <p className="text-xs text-mist/60 font-serif-accent italic">Join PlayVerse & start logging titles today</p>
         </div>
 
         {error && (
-          <div className="p-3.5 bg-[#FF6B6B]/15 border border-[#FF6B6B]/40 text-[#FF6B6B] text-xs font-bold">
+          <div className="p-3.5 bg-fire/15 border border-fire/40 text-fire text-xs font-bold rounded-md">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSignUp} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-[#FFFFFE] uppercase tracking-wider mb-1.5 font-display">
+            <label className="block text-xs font-bold text-mist uppercase tracking-wider mb-1.5 font-display">
               Display Name
             </label>
             <div className="relative">
-              <User className="absolute left-3.5 top-3.5 w-4 h-4 text-[#94A1B2]" />
+              <User className="absolute left-3.5 top-3.5 w-4 h-4 text-mist/50" />
               <input
                 type="text"
                 required
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="GamerTag / ScreenName"
-                className="w-full bg-[#0F0E17] border border-[#2E2B40] focus:border-[#FF6B6B] pl-10 pr-4 py-3 text-sm text-[#FFFFFE] focus:outline-none"
+                className="w-full bg-space border border-stroke-dark focus:border-fire pl-10 pr-4 py-3 text-sm text-mist focus:outline-none rounded-md transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#FFFFFE] uppercase tracking-wider mb-1.5 font-display">
+            <label className="block text-xs font-bold text-mist uppercase tracking-wider mb-1.5 font-display">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-[#94A1B2]" />
+              <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-mist/50" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="user@example.com"
-                className="w-full bg-[#0F0E17] border border-[#2E2B40] focus:border-[#FF6B6B] pl-10 pr-4 py-3 text-sm text-[#FFFFFE] focus:outline-none"
+                className="w-full bg-space border border-stroke-dark focus:border-fire pl-10 pr-4 py-3 text-sm text-mist focus:outline-none rounded-md transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#FFFFFE] uppercase tracking-wider mb-1.5 font-display">
+            <label className="block text-xs font-bold text-mist uppercase tracking-wider mb-1.5 font-display">
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-[#94A1B2]" />
+              <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-mist/50" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••  (min. 6 characters)"
-                className="w-full bg-[#0F0E17] border border-[#2E2B40] focus:border-[#FF6B6B] pl-10 pr-4 py-3 text-sm text-[#FFFFFE] focus:outline-none"
+                className="w-full bg-space border border-stroke-dark focus:border-fire pl-10 pr-4 py-3 text-sm text-mist focus:outline-none rounded-md transition-colors"
               />
             </div>
           </div>
@@ -138,7 +138,7 @@ export default function SignUpPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full agency-btn-primary text-sm py-3.5 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full btn-aui-fire text-sm py-3.5 transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer rounded-md"
           >
             {isLoading ? (
               'Creating Account...'
@@ -151,9 +151,9 @@ export default function SignUpPage() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-[#94A1B2] font-serif-accent italic">
+        <p className="text-center text-xs text-mist/60 font-serif-accent italic">
           Already have an account?{' '}
-          <Link href="/auth/sign-in" className="text-[#4ECDC4] hover:underline font-bold font-sans">
+          <Link href="/auth/sign-in" className="text-fire hover:underline font-bold font-sans">
             Sign In
           </Link>
         </p>

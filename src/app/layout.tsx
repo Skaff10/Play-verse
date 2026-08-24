@@ -31,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${lora.variable}`}>
-      <body className="antialiased bg-[#0F0E17] text-[#FFFFFE] flex flex-col min-h-screen font-sans selection:bg-[#FF6B6B] selection:text-[#FFFFFE]">
+      <body className="antialiased bg-space text-mist flex flex-col min-h-screen font-sans">
         <Providers>
           <Navbar />
           <main className="flex-grow">{children}</main>

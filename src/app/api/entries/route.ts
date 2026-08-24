@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { upsertUserEntry } from '@/lib/scoring';
+import { upsertUserEntry, deleteUserEntry } from '@/lib/scoring';
 import { getOrCreateCatalogItem, formatTMDBPosterUrl } from '@/lib/catalog';
 
 export async function GET(req: Request) {
@@ -85,6 +85,45 @@ export async function POST(req: Request) {
     console.error('Upsert entry error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to save entry' },
+      { status: 400 }
+    );
+  }
+}
+
+export async function DELETE(req: Request) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
+  }
+
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    const catalogItemId = searchParams.get('catalogItemId');
+    const externalId = searchParams.get('externalId');
+
+    if (!id && !catalogItemId && !externalId) {
+      return NextResponse.json(
+        { error: 'Missing required id, catalogItemId, or externalId parameter' },
+        { status: 400 }
+      );
+    }
+
+    await deleteUserEntry({
+      userId: user.id,
+      entryId: id || undefined,
+      catalogItemId: catalogItemId || undefined,
+      externalId: externalId || undefined,
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Entry deleted successfully',
+    });
+  } catch (error: any) {
+    console.error('Delete entry error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Failed to delete entry' },
       { status: 400 }
     );
   }
