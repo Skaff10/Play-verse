@@ -48,13 +48,22 @@ export async function POST(req: Request) {
     const cookieStore = await cookies();
     cookieStore.set('playverse_session', user.id, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
 
     return NextResponse.json({ success: true, user });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Sign-in error:', error);
-    return NextResponse.json({ error: 'Authentication failed' }, { status: 500 });
+    return NextResponse.json(
+      { 
+        error: 'Authentication failed', 
+        message: error?.message || 'Unknown server error'
+      }, 
+      { status: 500 }
+    );
   }
 }
+
