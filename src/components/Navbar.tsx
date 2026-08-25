@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Trophy,
   Library,
@@ -15,48 +15,19 @@ import {
   X,
 } from 'lucide-react';
 import LogEntryModal from './LogEntryModal';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-
-export interface UserSessionData {
-  id: string;
-  displayName: string;
-  email: string;
-  avatarUrl: string | null;
-  totalScore: number;
-}
+import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<UserSessionData | null>(null);
+  const { user, refreshSession, signOutUser } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const fetchSession = async () => {
-    try {
-      const res = await fetch('/api/auth/session');
-      const data = await res.json();
-      if (data.user) {
-        setUser(data.user);
-      } else {
-        setUser(null);
-      }
-    } catch (e) {
-      console.error('Session fetch error:', e);
-    }
-  };
-
-  useEffect(() => {
-    fetchSession();
-  }, [pathname]);
-
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
-      await fetch('/api/auth/sign-out', { method: 'POST' });
-      setUser(null);
+      await signOutUser();
       setShowUserMenu(false);
       router.push('/');
       router.refresh();
@@ -265,7 +236,7 @@ export default function Navbar() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSuccess={() => {
-            fetchSession();
+            refreshSession();
             setIsModalOpen(false);
           }}
         />

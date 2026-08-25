@@ -9,22 +9,7 @@ export async function GET() {
     return NextResponse.json({ user: null });
   }
 
-  // Fetch updated user stats from DB
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
-    select: {
-      id: true,
-      displayName: true,
-      email: true,
-      avatarUrl: true,
-      totalScore: true,
-      moviesLoggedCount: true,
-      seriesLoggedCount: true,
-      gamesLoggedCount: true,
-    },
-  });
-
-  return NextResponse.json({ user: dbUser });
+  return NextResponse.json({ user });
 }
 
 export async function POST(req: Request) {
@@ -57,3 +42,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to update session' }, { status: 500 });
   }
 }
+

@@ -157,7 +157,7 @@ export async function upsertUserEntry({
       totalNewPoints += entryPoints;
 
       // Rating points (+2)
-      if (userRating && userRating >= 1 && userRating <= 10) {
+      if (userRating !== undefined && userRating !== null && userRating >= 0 && userRating <= 10) {
         eventsToCreate.push({ type: 'rating', points: 2 });
         totalNewPoints += 2;
       }
@@ -193,7 +193,7 @@ export async function upsertUserEntry({
 
     // Rating points (+2) - check if user already earned rating points on this entry
     const alreadyRated = existingEntry.scoreEvents.some((e) => e.type === 'rating');
-    if (!alreadyRated && userRating && userRating >= 1 && userRating <= 10) {
+    if (!alreadyRated && userRating !== undefined && userRating !== null && userRating >= 0 && userRating <= 10) {
       eventsToCreate.push({ type: 'rating', points: 2 });
       totalNewPoints += 2;
     }

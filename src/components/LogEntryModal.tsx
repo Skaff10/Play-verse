@@ -57,7 +57,11 @@ export default function LogEntryModal({
   const [status, setStatus] = useState<'in_progress' | 'completed' | 'dropped' | 'wishlist'>(
     (existingEntry?.status as any) || 'completed'
   );
-  const [rating, setRating] = useState<number>(existingEntry?.userRating || 8);
+  const [ratingInput, setRatingInput] = useState<string>(
+    existingEntry?.userRating !== undefined && existingEntry?.userRating !== null
+      ? String(existingEntry.userRating)
+      : '8.0'
+  );
   const [hasRating, setHasRating] = useState<boolean>(
     existingEntry?.userRating !== undefined && existingEntry?.userRating !== null
   );
@@ -136,6 +140,14 @@ export default function LogEntryModal({
     setIsSubmitting(true);
     setErrorMessage(null);
 
+    const isWishlist = status === 'wishlist';
+    const parsedRating = parseFloat(ratingInput);
+    const finalRating =
+      !isWishlist && hasRating && !isNaN(parsedRating)
+        ? Math.min(10, Math.max(0, Math.round(parsedRating * 10) / 10))
+        : null;
+    const finalReview = !isWishlist && review.trim() ? review.trim() : null;
+
     try {
       const res = await fetch('/api/entries', {
         method: 'POST',
@@ -143,9 +155,9 @@ export default function LogEntryModal({
         body: JSON.stringify({
           item: selectedItem,
           status,
-          userRating: hasRating ? rating : null,
-          review: review.trim() || null,
-          isReplay,
+          userRating: finalRating,
+          review: finalReview,
+          isReplay: isWishlist ? false : isReplay,
         }),
       });
 
@@ -353,82 +365,104 @@ export default function LogEntryModal({
                 </div>
               </div>
 
-              {/* Rating Slider */}
-              <div className="bg-space p-4 border border-stroke-dark rounded">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-fire fill-fire" />
-                    <label className="text-xs font-bold uppercase tracking-wider text-mist">
-                      Your Rating (1 - 10)
-                    </label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] bg-fire/15 text-fire font-bold px-2 py-0.5 border border-fire/30 rounded">
-                      +2 XP Bonus
-                    </span>
-                    <input
-                      type="checkbox"
-                      id="hasRating"
-                      checked={hasRating}
-                      onChange={(e) => setHasRating(e.target.checked)}
-                      className="accent-fire w-4 h-4 cursor-pointer"
-                    />
-                  </div>
-                </div>
+              {/* Rating & Review (Only shown when NOT in Wishlist status) */}
+              {status !== 'wishlist' && (
+                <>
+                  {/* Rating Input (Exact Decimal Support, e.g. 9.3, 7.2, 8.5) */}
+                  <div className="bg-space p-4 border border-stroke-dark rounded">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Star className="w-4 h-4 text-fire fill-fire" />
+                        <label className="text-xs font-bold uppercase tracking-wider text-mist">
+                          Your Rating (0 - 10)
+                        </label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] bg-fire/15 text-fire font-bold px-2 py-0.5 border border-fire/30 rounded">
+                          +2 XP Bonus
+                        </span>
+                        <input
+                          type="checkbox"
+                          id="hasRating"
+                          checked={hasRating}
+                          onChange={(e) => setHasRating(e.target.checked)}
+                          className="accent-fire w-4 h-4 cursor-pointer"
+                        />
+                      </div>
+                    </div>
 
-                {hasRating && (
+                    {hasRating && (
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-2 flex-grow">
+                          <input
+                            type="number"
+                            min="0"
+                            max="10"
+                            step="0.1"
+                            value={ratingInput}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val === '') {
+                                setRatingInput('');
+                                return;
+                              }
+                              const num = parseFloat(val);
+                              if (isNaN(num)) {
+                                setRatingInput(val);
+                              } else if (num > 10) {
+                                setRatingInput('10');
+                              } else if (num < 0) {
+                                setRatingInput('0');
+                              } else {
+                                setRatingInput(val);
+                              }
+                            }}
+                            className="w-32 bg-eerie border border-stroke-dark focus:border-fire px-3 py-2 text-mist font-extrabold text-base font-display focus:outline-none rounded"
+                          />
+                          <span className="text-sm font-bold text-mist/60">/ 10</span>
+                        </div>
+                        <span className="text-xs font-serif-accent italic text-mist/70 whitespace-nowrap">
+                          {(() => {
+                            const r = parseFloat(ratingInput);
+                            if (isNaN(r)) return 'Enter rating';
+                            if (r >= 9) return '🔥 Masterpiece';
+                            if (r >= 7) return '👍 Great';
+                            if (r >= 5) return '👌 Average';
+                            return '👎 Poor';
+                          })()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Review Textarea with 40 char threshold */}
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between text-mist font-extrabold text-lg font-display">
-                      <span>{rating} / 10</span>
-                      <span className="text-xs font-serif-accent italic text-mist/60">
-                        {rating >= 9
-                          ? '🔥 Masterpiece'
-                          : rating >= 7
-                          ? '👍 Great'
-                          : rating >= 5
-                          ? '👌 Average'
-                          : '👎 Poor'}
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold uppercase tracking-wider text-mist flex items-center gap-1.5">
+                        <MessageSquare className="w-3.5 h-3.5 text-fire" />
+                        <span>Write Review (Optional)</span>
+                      </label>
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 border rounded ${
+                          isReviewEligible
+                            ? 'bg-fire text-mist border-fire'
+                            : 'bg-space text-mist/60 border-stroke-dark'
+                        }`}
+                      >
+                        {isReviewEligible ? '+2 XP Unlocked!' : `${reviewLength} / ${MIN_REVIEW_LENGTH} chars for +2 XP`}
                       </span>
                     </div>
-                    <input
-                      type="range"
-                      min="1"
-                      max="10"
-                      step="1"
-                      value={rating}
-                      onChange={(e) => setRating(Number(e.target.value))}
-                      className="w-full h-2 bg-eerie appearance-none cursor-pointer accent-fire rounded"
+
+                    <textarea
+                      rows={3}
+                      placeholder="Share your thoughts on the plot, mechanics, or direction... (min. 40 characters for +2 XP bonus)"
+                      value={review}
+                      onChange={(e) => setReview(e.target.value)}
+                      className="w-full bg-space border border-stroke-dark focus:border-fire p-3 text-xs text-mist focus:outline-none resize-none rounded"
                     />
                   </div>
-                )}
-              </div>
-
-              {/* Review Textarea with 40 char threshold */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-wider text-mist flex items-center gap-1.5">
-                    <MessageSquare className="w-3.5 h-3.5 text-fire" />
-                    <span>Write Review (Optional)</span>
-                  </label>
-                  <span
-                    className={`text-[10px] font-bold px-2 py-0.5 border rounded ${
-                      isReviewEligible
-                        ? 'bg-fire text-mist border-fire'
-                        : 'bg-space text-mist/60 border-stroke-dark'
-                    }`}
-                  >
-                    {isReviewEligible ? '+2 XP Unlocked!' : `${reviewLength} / ${MIN_REVIEW_LENGTH} chars for +2 XP`}
-                  </span>
-                </div>
-
-                <textarea
-                  rows={3}
-                  placeholder="Share your thoughts on the plot, mechanics, or direction... (min. 40 characters for +2 XP bonus)"
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
-                  className="w-full bg-space border border-stroke-dark focus:border-fire p-3 text-xs text-mist focus:outline-none resize-none rounded"
-                />
-              </div>
+                </>
+              )}
 
               {/* Rewatch / Replay option if already existing */}
               {existingEntry && (

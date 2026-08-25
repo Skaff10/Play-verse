@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { DM_Sans, Lora } from 'next/font/google';
 import './globals.css';
 import Providers from '@/components/Providers';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import LayoutShell from '@/components/LayoutShell';
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -33,11 +32,10 @@ export default function RootLayout({
     <html lang="en" className={`${dmSans.variable} ${lora.variable}`}>
       <body className="antialiased bg-space text-mist flex flex-col min-h-screen font-sans">
         <Providers>
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer />
+          <LayoutShell>{children}</LayoutShell>
         </Providers>
       </body>
     </html>
   );
 }
+

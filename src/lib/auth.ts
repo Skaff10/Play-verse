@@ -7,6 +7,9 @@ export interface UserSession {
   email: string;
   avatarUrl: string | null;
   totalScore: number;
+  moviesLoggedCount: number;
+  seriesLoggedCount: number;
+  gamesLoggedCount: number;
 }
 
 export async function getCurrentUser(): Promise<UserSession | null> {
@@ -20,19 +23,24 @@ export async function getCurrentUser(): Promise<UserSession | null> {
 
     const user = await prisma.user.findUnique({
       where: { id: sessionToken },
+      select: {
+        id: true,
+        displayName: true,
+        email: true,
+        avatarUrl: true,
+        totalScore: true,
+        moviesLoggedCount: true,
+        seriesLoggedCount: true,
+        gamesLoggedCount: true,
+      },
     });
 
     if (!user) return null;
 
-    return {
-      id: user.id,
-      displayName: user.displayName,
-      email: user.email,
-      avatarUrl: user.avatarUrl,
-      totalScore: user.totalScore,
-    };
+    return user;
   } catch (error) {
     console.error('Error fetching current user:', error);
     return null;
   }
 }
+
